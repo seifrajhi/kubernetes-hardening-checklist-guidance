@@ -21,7 +21,6 @@
         "theme-default",
         "-highlight", "prism", "prism-themes",
         "lightbox",
-        "ga",
         "sitemap-general",
         "insert-logo",
         "hide-element",
