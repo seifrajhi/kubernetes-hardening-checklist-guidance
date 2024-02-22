@@ -1,5 +1,6 @@
 #!/bin/bash
-#gitbook install
+#gitbook
 gitbook build
-cp images/saifeddinee-rajhi.png _book/gitbook/images
+cp images/saifeddine-rajhi.png _book/gitbook/images
 cp images/favicon.ico _book/gitbook/images
+cp images/logo-black-text.jpeg _book/gitbook/images
