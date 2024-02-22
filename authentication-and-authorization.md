@@ -1,0 +1,31 @@
+# Authentication and authorization
+
+Authentication and authorization are the primary mechanisms for restricting access to cluster resources. If a cluster is misconfigured, cyber actors can scan well-known Kubernetes ports and access the cluster's database or make API calls without authentication. User authentication is not a built-in feature of Kubernetes. However, there are several ways for administrators to add authentication to the cluster.
+
+## Certification
+
+> The administrator must add an authentication method to the cluster to implement the authentication and authorization mechanism.
+
+There are two types of users in a Kubernetes cluster: service accounts and regular user accounts. Service accounts handle API requests on behalf of Pods. Authentication is typically managed automatically by Kubernetes through the ServiceAccount Admission Controller using bearer tokens. Bearer tokens are installed into the Pod at a conventional location and may be used outside the cluster if the token is not secure. Because of this, access to Pod Secrets should be restricted to those who need to view them using Kubernetes RBAC. There is no automatic user authentication method for regular users and administrator accounts. The administrator must add an authentication method to the cluster to implement the authentication and authorization mechanism.
+
+Kubernetes assumes that user authentication is managed by a cluster-independent service. [Kubernetes documentation](https://kubernetes.io/docs/reference/access-authn-authz/authentication) lists several methods to implement user authentication, including client certificates, bearer tokens, authentication plugins and others Authentication protocol. At least one method of user authentication should be implemented. When implementing multiple authentication methods, the first module to successfully authenticate a request shortens the evaluation time. Administrators should not use weak methods such as static password files. Weak authentication methods could allow network actors to impersonate legitimate users for authentication.
+
+Anonymous requests are requests that are denied by other configured authentication methods and are not associated with any individual user or Pod. In a server with token authentication set up and anonymous requests enabled, requests without a token will be performed as anonymous requests. In Kubernetes 1.6 and newer, anonymous requests are enabled by default. When RBAC is enabled, anonymous requests require explicit authorization from the `system:anonymous` user or the `system:unauthenticated` group. Anonymous requests should be disabled by passing the `--anonymous-auth=false` option to the API server. Enabling anonymous requests may allow network actors to access cluster resources without authentication.
+
+## Role-based access control
+
+RBAC is a method of controlling access to cluster resources based on the roles of individuals within an organization. In Kubernetes 1.6 and newer, RBAC is enabled by default. To use kubectl to check whether RBAC is enabled in your cluster, execute `kubectl api-version`. If enabled, the API version of `rbac.authorization.k8s.io/v1` should be listed. Cloud Kubernetes services may have different ways of checking whether a cluster has RBAC enabled. If RBAC is not enabled, start the API server with the `--authorization-mode` flag in the following command.
+
+```sh
+kube-apiserver --authorization-mode=RBAC
+```
+
+Leaving an authorization mode flag, such as `AlwaysAllow`, allows all authorization requests, effectively disabling all authorization and limiting the ability to enforce least privilege access.
+
+Two types of permissions can be set: `Roles` and `ClusterRoles`. `Roles` sets permissions for a specific namespace, while `ClusterRoles` sets permissions for all cluster resources regardless of namespace. `Roles` and `ClusterRoles` can only be used to add permissions. There are no rejection rules. If a cluster is configured to use RBAC and anonymous access is disabled, the Kubernetes API server will deny permissions that are not explicitly allowed. An example of an RBAC role is shown in [**Appendix** J](appendix/j.md): the `pod-reader` RBAC role.
+
+A `Role` or `ClusterRole` defines a permission but does not bind the permission to a user. `RoleBindings` and `ClusterRoleBindings` are used to associate a `Roles` or `ClusterRoles` with a user, group or service account. A role binding grants the permissions of a role or cluster role to a user, group, or service account in a defined namespace. `ClusterRoles` are created independently of the namespace and `RoleBinding` can then be used to limit the scope of the namespace to individuals. `ClusterRoleBindings` grant `ClusterRoles` to a user, group or service account across all cluster resources. Examples of RBAC `RoleBinding` and `ClusterRoleBinding` are in [**Appendix K: RBAC `RoleBinding` and `ClusterRoleBinding` examples**] (appendix/k.md).
+
+To create or update `Roles` and `ClusterRoles`, the user must have the permissions contained in the new role in the same scope, or have access to the `Roles` or `ClusterRoles` resource in the `rbac.authorization.k8s.io` API group Explicit permission to execute the upgrade verb. Once a binding is created, `Roles` or `ClusterRoles` are immutable. To change a character, the binding must be deleted.
+
+Permissions assigned to users, groups, and service accounts should follow the principle of least privilege and only grant necessary permissions to resources. Users or user groups can be restricted to specific namespaces where the required resources are located. By default, a service account is created for each namespace so that Pods can access the Kubernetes API. You can use RBAC policies to specify the allowed actions for a service account per namespace. Access to the Kubernetes API is restricted by creating RBAC roles or `ClusterRoles` with the appropriate API request verb and required resources to which the action can be applied. There are tools that can help audit RBAC policies by printing `Roles` and `ClusterRoles` for users, groups and service accounts and their associated assignments.
