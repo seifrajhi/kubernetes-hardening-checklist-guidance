@@ -3,7 +3,7 @@
     "description": "",
     "links": {
         "sidebar": {
-            "Return to home page": "https://seifrajhi.github.io"
+            "Return to home page": "https://seifrajhi.github.io/kubernetes-hardening-checklist-guidance"
         }
     },
     "plugins": [
@@ -66,7 +66,7 @@
             "elements": [".gitbook-link"]
         },
         "insert-logo": {
-            "url": "https://seifrajhi.github.io/images/logo-black-text.png",
+            "url": "https://seifrajhi.github.io/images/logo-black-text.jpeg",
             "style": "background: none; max-height: 100px; min-height: 30px"
         },
         "adsense": {
