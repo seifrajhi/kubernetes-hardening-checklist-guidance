@@ -1,5 +1,5 @@
 #!/bin/bash
-#gitbook install
+#gitbook
 gitbook build
 cp images/saifeddine-rajhi.png _book/gitbook/images
 cp images/favicon.ico _book/gitbook/images
