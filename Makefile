@@ -1,6 +1,6 @@
 BOOK_NAME := kubernetes-hardening-checklist-guidance
 BOOK_OUTPUT := _book
-image := seifrajhi.github.io/gitbook-builder:2019-07-31
+image := jimmysong/gitbook-builder:2019-07-31
 #docker := docker run -t -i --sig-proxy=true --rm -v $(shell pwd):/gitbook -w /gitbook -p 4000:4000 $(image)
 docker := docker run --sig-proxy=true --rm -v $(shell pwd):/gitbook -w /gitbook -p 4000:4000 $(image)
 
